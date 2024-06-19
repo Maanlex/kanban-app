@@ -10,6 +10,3 @@
 	<slot />
 </div>
 	
-<footer class="flex gap-3 justify-center mt-auto">
-	<p>2024 Maanlex	</p>
-</footer>

@@ -2,24 +2,25 @@
 	import { flip } from 'svelte/animate';
   import { dndzone, setDebugMode } from 'svelte-dnd-action';
 	import Column from "./Column.svelte";
-  import { BoardColumn, Card } from '$classes';
-	const flipDurationMs = 300;
+  import { type Board, type List, type Task, } from '$lib/types';
+	const flipDurationMs = 150;
 
-  setDebugMode(true);
+  //setDebugMode(true);
 	
-  export let columns: Array<BoardColumn>;
+  export let lists: List[];
+
 	// will be called any time a card or a column gets dropped to update the parent data
-	export let onFinalUpdate: (newItems: Array<BoardColumn>) => void;
+	export let onFinalUpdate: (newLists: List[]) => void;
  
-  function handleDndConsiderColumns(e: CustomEvent<DndEvent<BoardColumn>>) {
-    columns = e.detail.items;
+  function handleDndConsiderColumns(e: CustomEvent<DndEvent<List>>) {
+    lists = e.detail.items;
   }
-  function handleDndFinalizeColumns(e: CustomEvent<DndEvent<BoardColumn>>) {
-    onFinalUpdate(e.detail.items);
+  function handleDndFinalizeColumns(e: CustomEvent<DndEvent<List>>) {
+		onFinalUpdate(e.detail.items);
   }
- 	function handleItemFinalize(columnIdx: number, newItems: Array<Card>) {
-		columns[columnIdx].items = newItems;
-		onFinalUpdate([...columns]);
+ 	function handleItemFinalize(columnIdx: number, newItems: Task[]) {
+		lists[columnIdx].tasks = newItems;
+    onFinalUpdate([...lists]);
 	}
 </script>
 <style>
@@ -38,10 +39,12 @@
     }
 </style>
 
-<section class="board" use:dndzone={{items:columns, flipDurationMs, type:'column'}} on:consider={handleDndConsiderColumns} on:finalize={handleDndFinalizeColumns}>
-    {#each columns as boardColumn, idx (boardColumn.id)}
+<section class="board" use:dndzone={{items:lists, flipDurationMs, type:'column'}}
+  on:consider={handleDndConsiderColumns} on:finalize={handleDndFinalizeColumns}>
+
+    {#each lists as list, idx (list.id)}
   		<div class="column" animate:flip="{{duration: flipDurationMs}}" >    
-				<Column column={boardColumn} onDrop={(newItems) => handleItemFinalize(idx, newItems)} />
+				<Column name={list.name} items={list.tasks} listId={list.id} onDrop={(newItems) => handleItemFinalize(idx, newItems)} />
 			</div>
     {/each}
 </section>

@@ -1,22 +1,35 @@
 <script lang="ts">
 	import { flip } from 'svelte/animate';
-    import { dndzone } from 'svelte-dnd-action';
-    import {BoardColumn,Card} from '$classes'
-	const flipDurationMs = 150;
+    import { dndzone,  TRIGGERS } from 'svelte-dnd-action';
+    import {type List, type Task} from '$lib/types';
+	const flipDurationMs = 200;
 
     // Components parameter
-    export let column: BoardColumn;
-	export let onDrop: (newItems: Array<Card>) => void;
+    export let name: string;
+	export let items: Task[];
+    export let listId: number;
+	export let onDrop: (newItems: Task[]) => void;
 
-	let name: string = column.name;
-	let items: Array<Card> = column.items;
 	
-	function handleDndConsiderCards(e: CustomEvent<DndEvent<Card>>) {
-        //console.warn("got consider", name); 
+	
+	function handleDndConsiderCards(e: CustomEvent<DndEvent<Task>>) {
         items = e.detail.items;
     }
-    function handleDndFinalizeCards(e: CustomEvent<DndEvent<Card>>) {
+    function handleDndFinalizeCards(e: CustomEvent<DndEvent<Task>>) {
         onDrop(e.detail.items);
+        const {id, trigger} = e.detail.info;
+			  switch(trigger) {
+						case(TRIGGERS.DROPPED_INTO_ZONE):
+						case(TRIGGERS.DROPPED_OUTSIDE_OF_ANY): {
+							console.log(`item ${id} was added to list ${listId}`);
+							break;
+						}
+						case(TRIGGERS.DROPPED_INTO_ANOTHER): {
+							console.log(`item ${id} was taken out of list ${listId}`);
+							break;
+						}
+					default: console.log("this basically never happens");
+				} 
     }
 </script>
 <style>
@@ -26,12 +39,12 @@
 		/*Notice we make sure this container doesn't scroll so that the title stays on top and the dndzone inside is scrollable*/
 		overflow-y: hidden;
 	}
-	.column-content {
+	.list-content {
         height: calc(100% - 2.5em);
         /* Notice that the scroll container needs to be the dndzone if you want dragging near the edge to trigger scrolling */
         overflow-y: scroll;
     }
-    .column-title {
+    .list-title {
 				height: 2.5em;
 			  font-weight: bold;
         display: flex;
@@ -46,14 +59,15 @@
         justify-content: center;
         align-items: center;
         background-color: #dddddd;
-        border: 1px solid #ffffff ;
+        border: 1px solid #000000 ;
+        color: #000000;
     }
 </style>
 <div class='wrapper'>
- 	<div class="column-title">
+ 	<div class="list-title">
 		{name}
 	</div>
-	<div class="column-content" use:dndzone={{items, flipDurationMs, zoneTabIndex: -1}}
+	<div class="list-content" use:dndzone={{items, flipDurationMs, zoneTabIndex: -1}}
      	on:consider={handleDndConsiderCards} 
 		on:finalize={handleDndFinalizeCards}>
 		

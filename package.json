@@ -42,6 +42,8 @@
     "vitest": "^1.6.0"
   },
   "dependencies": {
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "muuri": "^0.9.5",
+    "web-animations-js": "^2.3.2"
   }
 }

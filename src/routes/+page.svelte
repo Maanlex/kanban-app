@@ -1,24 +1,13 @@
 <script lang="ts">
 	import { Button } from 'svelte-ux';
-	import { BoardColumn, Card } from '$classes';
-	import { Board } from '$components'
+	import {type Board, BasicBoard, type List } from '$lib/types';
+	import BoardCpnt from '$lib/components/Board.svelte'
 
-	let board: Array<BoardColumn> = [
-		new BoardColumn("to do",[
-			new Card("Test 1"),
-			new Card("Test 2"),
-			new Card("Test 3")
-		]),
-		new BoardColumn("Doing",[
-			new Card("Test 4"),
-			new Card("Test 5"),
-			new Card("Test 6")
-		]),
-		new BoardColumn("Done",[])
-	];
+	let board: Board = BasicBoard
 
-	let handleBoardUpdate = (newBoard: Array<BoardColumn>) => {
-		board = newBoard;
+
+	let handleBoardUpdated = (newLists: List[]) => {
+		board.lists = newLists;
 	}
 
 </script>
@@ -26,6 +15,6 @@
 <main class="p-2 grid place-items-center content-center">
 	<h1 class="text-2xl font-semibold mb-2">Welcome to a ✨Kanban App✨</h1>
 	<div>
-		<Board columns={board} onFinalUpdate={handleBoardUpdate}/>
+		<BoardCpnt lists={board.lists} onFinalUpdate={handleBoardUpdated}/>
 	</div>
 </main>
