@@ -1,16 +1,13 @@
-const colors = require('tailwindcss/colors');
-const svelte_ux = require('svelte-ux/plugins/tailwind.cjs');
+/** @type {import('tailwindcss').Config} */
+export default {
+    content: ['./src/**/*.{html,js,svelte,ts}'],
+    theme: {
+      extend: {}
+    },
+    plugins: [require('daisyui')],
+    daisyui: {
+      darkTheme: "synthwave",
+      themes: ["synthwave", "cupcake"],
+    },
+  };
 
-/** @type {import('tailwindcss').Config}*/
-const config = {
-	content: ['./src/**/*.{html,svelte}', './node_modules/svelte-ux/**/*.{svelte,js}'],
-	theme: {
-		extend: {}
-	},
-	variants: {
-		extend: {}
-	},
-	plugins: [svelte_ux]
-};
-
-module.exports = config;

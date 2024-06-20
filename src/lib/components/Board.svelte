@@ -23,9 +23,9 @@
     onFinalUpdate([...lists]);
 	}
 </script>
-<style>
+<style lang="postcss">
     .board {
-        height: 90vh;
+        height: 85vh;
         width: 100%;
         padding: 0.5em;
     }
@@ -34,12 +34,11 @@
         width: 300px;
         padding: 0.5em;
         margin: 0.5em;
-        float: left;
-        border: 1px solid #333333;
+        float: left; 
     }
 </style>
 
-<section class="board" use:dndzone={{items:lists, flipDurationMs, type:'column'}}
+<section class="board" use:dndzone={{items:lists, flipDurationMs, type:'column',dropTargetStyle: {"outline":"1px"}}}
   on:consider={handleDndConsiderColumns} on:finalize={handleDndFinalizeColumns}>
 
     {#each lists as list, idx (list.id)}
