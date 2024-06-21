@@ -16,6 +16,7 @@
     "test:unit": "vitest"
   },
   "devDependencies": {
+    "@iconify/tailwind": "^1.1.1",
     "@mdi/js": "^7.4.47",
     "@playwright/test": "^1.44.1",
     "@sveltejs/adapter-auto": "^3.2.1",
@@ -41,6 +42,7 @@
     "vitest": "^1.6.0"
   },
   "dependencies": {
+    "@iconify-json/mdi": "^1.1.67",
     "bits-ui": "^0.21.10",
     "daisyui": "^4.12.2",
     "dotenv": "^16.4.5",

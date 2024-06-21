@@ -131,7 +131,10 @@
     <div class="w-11/12 left-0 right-0 ml-auto mr-auto absolute bottom-2">
         {#if !isAddingTask}
             <button class="btn btn-block bg-transparent border-transparent"
-            on:click={handleAddTaskSwitch}>Add a new Task</button>
+            on:click={handleAddTaskSwitch}>
+                <span class="icon-[mdi--plus]" style="width: 1.2rem; height: 1.2rem;"></span>
+                Add a new Task
+            </button>
         {:else}
             <input id="task_name_input" type="text" placeholder="Enter a title for this Task..."
             class="input max-w-xs" autocomplete="off" 
