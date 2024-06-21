@@ -68,6 +68,7 @@
 					};
 					onFinalUpdate([...lists,newList]);
                     listNameInput.value = "";
+					isAddingList = false;	
                 }
                 break;
             case "Escape":
