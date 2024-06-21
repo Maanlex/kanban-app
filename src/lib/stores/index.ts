@@ -1,1 +1,1 @@
-export {boardStore} from './kaban';
+export {boardStore, currentlyAddingTaskStore} from './store';
