@@ -6,6 +6,9 @@
 
 <div class="flex flex-col min-h-screen">
 	<NavBar/>
-	<slot />
+	<div class="mt-14">
+		<slot />
+	</div>
+	
 </div>
 	
