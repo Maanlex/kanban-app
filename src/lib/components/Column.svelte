@@ -20,18 +20,6 @@
         justify-content: center;
         align-items: center;
     }
-    .card {
-        height: 3em;
-        width: 95%;
-        margin: 0.4em 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        @apply rounded-lg;
-        @apply bg-secondary;
-        @apply text-secondary-content;
-        @apply ml-auto mr-auto;
-    }
 
     :global(.droppableColumn){
         @apply bg-neutral-content bg-opacity-10;
@@ -47,6 +35,7 @@
     import { Separator } from "bits-ui";
     import {type Task} from '$lib/types';
     import { clickOutside } from '$lib/utils';
+	import TaskCard from './task/TaskCard.svelte';
     
 	const flipDurationMs = 200;
 
@@ -107,8 +96,24 @@
         }
 
     }
-</script>
 
+    function handleEditTask(e: CustomEvent<Task>){
+        let newTask: Task = e.detail;
+        const updatedTasks = items.map((task) =>{
+            if(task.id == newTask.id) return newTask;
+            else return task;
+        })
+        items = updatedTasks;
+        onDrop(items);
+    }
+    function handleDeleteTask(e: CustomEvent<Task>){
+        let deletedTask: Task = e.detail;
+        const updatedTasks = items.filter((task) => task.id != deletedTask.id);
+        items = updatedTasks;
+        onDrop(items);
+    }
+</script>
+<!-- TODO: change drop zone target -->
 <div class='wrapper'>
  	<div class="list-title">
 		{name}
@@ -122,8 +127,8 @@
 
 		<!-- TODO: Task Component -->
         {#each items as item (item.id)}
-            <div class="card" animate:flip="{{duration: flipDurationMs}}" >
-                {item.name}
+            <div animate:flip="{{duration: flipDurationMs}}" >
+                <TaskCard task={item} on:edit-task={handleEditTask} on:delete-task={handleDeleteTask}/>
             </div>
         {/each}
         

@@ -4,3 +4,5 @@ import { type Board } from '../types';
 export const boardStore = writable<Board>();
 
 export const currentlyAddingTaskStore = writable(-1);
+
+export const contextMenuUp = writable(-1);
