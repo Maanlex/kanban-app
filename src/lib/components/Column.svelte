@@ -112,20 +112,25 @@
         items = updatedTasks;
         onDrop(items);
     }
+
+    function transformDraggedElement(draggedEl?: HTMLElement, data?: Item, index?: number){
+        draggedEl?.style.setProperty("outline", "0");
+    }
 </script>
 <!-- TODO: change drop zone target -->
+ <!-- TODO: edit, delete list-->
 <div class='wrapper'>
  	<div class="list-title">
 		{name}
 	</div>
     <div class="divider mb-0 mt-0"/>
-	<div class="list-content" use:dndzone={{items, flipDurationMs, zoneTabIndex: -1,
-        dropTargetStyle: {"outline":"0px"},dropTargetClasses: ["droppableColumn"]}}
+	<div class="list-content" use:dndzone={{items, flipDurationMs, transformDraggedElement, zoneTabIndex: -1,
+        dropTargetStyle: {"outline":"0px"},dropTargetClasses: ["droppableColumn"], }}
      	on:consider={handleDndConsiderCards} 
 		on:finalize={handleDndFinalizeCards}>
 
 
-		<!-- TODO: Task Component -->
+		
         {#each items as item (item.id)}
             <div animate:flip="{{duration: flipDurationMs}}" >
                 <TaskCard task={item} on:edit-task={handleEditTask} on:delete-task={handleDeleteTask}/>

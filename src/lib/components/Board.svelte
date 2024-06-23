@@ -44,6 +44,9 @@
 		}
 		
 	}
+	function transformDraggedElement(draggedEl?: HTMLElement, data?: Item, index?: number){
+        draggedEl?.style.setProperty("outline", "0");
+    }
 
 	let isAddingList: boolean;
 	let newListName: string;
@@ -100,7 +103,8 @@
 
 </style>
 <div class="board">
-	<section class="actual-board" use:dndzone={{items:lists, flipDurationMs, type:'column',dropTargetStyle: {"outline":"1px"}}}
+	<section class="actual-board" use:dndzone={{items:lists, flipDurationMs, 
+	transformDraggedElement, type:'column',dropTargetStyle: {"outline":"1px"}}}
 	on:consider={handleDndConsiderColumns} on:finalize={handleDndFinalizeColumns}>
 
 		{#each lists as list, idx (list.id)}
