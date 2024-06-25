@@ -20,6 +20,6 @@
 </script>
 
 <div class="card">
-
+    <!-- TODO: Task Component -->
     <p>{task.name}</p>
 </div>

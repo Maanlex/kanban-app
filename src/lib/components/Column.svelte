@@ -13,14 +13,14 @@
         /* Notice that the scroll container needs to be the dndzone if you want dragging near the edge to trigger scrolling */
         overflow-y: scroll;
     }
-    .list-title {
+    .list-header {
 		height: 2.5em;
+        width: 100%;
 		font-weight: bold;
         display: flex;
         justify-content: center;
         align-items: center;
     }
-
     :global(.droppableColumn){
         @apply bg-neutral-content bg-opacity-10;
     }
@@ -31,39 +31,32 @@
     import {currentlyAddingTaskStore} from '$lib/stores';
 	import { flip } from 'svelte/animate';
     import { dndzone,  TRIGGERS, SHADOW_ITEM_MARKER_PROPERTY_NAME } from 'svelte-dnd-action';
-    import {createEventDispatcher} from 'svelte';
-    import { Separator } from "bits-ui";
+    import {createEventDispatcher, onMount} from 'svelte';
     import {type Task} from '$lib/types';
     import { clickOutside } from '$lib/utils';
 	import TaskCard from './task/TaskCard.svelte';
+	import { isDragging, listNameChange } from '$lib/stores/store';
+	import InputHelp from './InputHelp.svelte';
     
 	const flipDurationMs = 200;
 
     // Components parameter
     export let name: string;
-	export let items: Task[];
+    export let items: Task[];
     export let listId: number;
 	export let onDrop: (newItems: Task[]) => void;
 
-	
+
 	function handleDndConsiderCards(e: CustomEvent<DndEvent<Task>>) {
         items = e.detail.items;
+        $isDragging = true;
     }
     function handleDndFinalizeCards(e: CustomEvent<DndEvent<Task>>) {
+        $isDragging = false;
+        if(name !== actualListName){
+            dispatch("edit-list-name");
+        }
         onDrop(e.detail.items);
-        /*const {id, trigger} = e.detail.info;
-			  switch(trigger) {
-						case(TRIGGERS.DROPPED_INTO_ZONE):
-						case(TRIGGERS.DROPPED_OUTSIDE_OF_ANY): {
-							console.log(`item ${id} was added to list ${listId}`);
-							break;
-						}
-						case(TRIGGERS.DROPPED_INTO_ANOTHER): {
-							console.log(`item ${id} was taken out of list ${listId}`);
-							break;
-						}
-					default: console.log("this basically never happens");
-				}*/ 
     }
 
     let isAddingTask: boolean = false;
@@ -116,12 +109,57 @@
     function transformDraggedElement(draggedEl?: HTMLElement, data?: Item, index?: number){
         draggedEl?.style.setProperty("outline", "0");
     }
+
+    let listNameInput: HTMLInputElement;
+    let isInputHidden: boolean = true;
+    let actualListName: string = name;
+    $: listNameInputState = isInputHidden ? "hidden" : "";
+    $: listNameH2State = isInputHidden ? "" : "hidden"; 
+
+    function handleEditListName(){
+        if(actualListName !== name){
+            if(actualListName === "") actualListName = name;
+            $listNameChange = {listId: listId, name: actualListName};
+            if(!$isDragging) dispatch("edit-list-name");
+        }
+        isInputHidden = true;
+    }
+    function handleListNameInputKeydown(e: KeyboardEvent){
+        switch(e.key){
+            case "Enter":
+            case "Escape":
+                handleEditListName();
+                break;
+        }
+    }
+    function handleListNameInputActivation(){
+        isInputHidden = false;
+        setTimeout(() => {
+            listNameInput.focus();
+            listNameInput.select();
+        },1);
+        
+    }
+
 </script>
 <!-- TODO: change drop zone target -->
- <!-- TODO: edit, delete list-->
+<!-- TODO: edit, delete list-->
 <div class='wrapper'>
- 	<div class="list-title">
-		{name}
+ 	<div class="list-header">
+
+        <button class="absolute left-5 top-3 justify-start text-left {listNameH2State}" on:click={handleListNameInputActivation} type="button" aria-label="Edit column name">
+            <h2 class="absolute bg-transparent w-52">{actualListName}</h2>
+        </button>
+
+        <input type="text" maxlength="22" class="absolute bg-transparent w-52 left-5 top-3 {listNameInputState}" bind:this={listNameInput}
+        on:keydown={handleListNameInputKeydown} bind:value={actualListName}
+        use:clickOutside on:click_outside={handleEditListName}
+        on:focusout={handleEditListName}/>
+
+
+        <button class="btn btn-ghost btn-xs absolute right-2 top-3">
+            <span class="icon-[mdi--dots-vertical]" style="width: 1.2rem; height: 1.2rem;"></span>
+        </button>
 	</div>
     <div class="divider mb-0 mt-0"/>
 	<div class="list-content" use:dndzone={{items, flipDurationMs, transformDraggedElement, zoneTabIndex: -1,
@@ -129,8 +167,6 @@
      	on:consider={handleDndConsiderCards} 
 		on:finalize={handleDndFinalizeCards}>
 
-
-		
         {#each items as item (item.id)}
             <div animate:flip="{{duration: flipDurationMs}}" >
                 <TaskCard task={item} on:edit-task={handleEditTask} on:delete-task={handleDeleteTask}/>

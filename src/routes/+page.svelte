@@ -15,6 +15,8 @@
 
 <main class="p-2 grid">
 	<div>
-		<BoardCpnt lists={$boardStore.lists} onFinalUpdate={handleBoardUpdated}/>
+		{#key $boardStore.lists}
+			<BoardCpnt lists={$boardStore.lists} onFinalUpdate={handleBoardUpdated}/>
+		{/key}
 	</div>
 </main>

@@ -1,4 +1,6 @@
-export type Task = {
+import { type Item } from "svelte-dnd-action"
+
+export type Task = Item & {
     id: number,
     name: string
 }

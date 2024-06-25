@@ -1,3 +1,25 @@
+<style lang="postcss">
+    .board {
+        height: 84vh;
+        width: 100%;
+		display: flex;
+		overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+    }
+	.actual-board{
+		display: flex;
+	}
+    .column {
+        height: 100%;
+        width: 300px;
+        padding: 0.5em;
+        margin: 0.5em;
+        //float: left; 
+    }
+
+
+</style>
 <script lang="ts">
 	import { flip } from 'svelte/animate';
   	import { dndzone, setDebugMode } from 'svelte-dnd-action';
@@ -5,22 +27,30 @@
   	import { type Board, type List, type Task, } from '$lib/types';
 	import {currentlyAddingTaskStore} from '$lib/stores';
 	import {clickOutside} from '$lib/utils'
+	import { isDragging, listNameChange } from '$lib/stores/store';
 	const flipDurationMs = 150;
 
   	export let lists: List[];
+
+	//$: lists, console.log(lists);
+	
 
 	// will be called any time a card or a column gets dropped to update the parent data
 	export let onFinalUpdate: (newLists: List[]) => void;
  
 	function handleDndConsiderColumns(e: CustomEvent<DndEvent<List>>) {
+		$isDragging = true;
 		lists = e.detail.items;
 	}
   	function handleDndFinalizeColumns(e: CustomEvent<DndEvent<List>>) {
-		onFinalUpdate(e.detail.items);
-		
+		$isDragging = false;
+		lists = e.detail.items;
+		if($listNameChange.listId != -1) handleEditListName();
+		else onFinalUpdate(lists);
   	}
  	function handleItemFinalize(columnIdx: number, newItems: Task[]) {
 		lists[columnIdx].tasks = newItems;
+		if($listNameChange.listId != -1) handleEditListName();
     	onFinalUpdate([...lists]);
 	}
 
@@ -78,30 +108,22 @@
 				isAddingList = false;
         }
 	}
-
-</script>
-<style lang="postcss">
-    .board {
-        height: 84vh;
-        width: 100%;
-		display: flex;
-		overflow-x: auto;
-        overflow-y: hidden;
-        white-space: nowrap;
-    }
-	.actual-board{
-		display: flex;
+	function handleEditListName(){
+		
+		let list: List | undefined = lists.find((l) => l.id == $listNameChange.listId);
+		if (list) {
+			list.name = $listNameChange.name;
+			const updatedLists = lists.map((l) => {
+				if(l.id == $listNameChange.listId) return list;
+				else return l; 
+			});
+			lists = updatedLists;
+			onFinalUpdate(lists);
+			$listNameChange.listId = -1;
+		}
 	}
-    .column {
-        height: 100%;
-        width: 300px;
-        padding: 0.5em;
-        margin: 0.5em;
-        //float: left; 
-    }
+</script>
 
-
-</style>
 <div class="board">
 	<section class="actual-board" use:dndzone={{items:lists, flipDurationMs, 
 	transformDraggedElement, type:'column',dropTargetStyle: {"outline":"1px"}}}
@@ -114,7 +136,8 @@
 					on:wants-add-task={handleWantsToAddTask}
 					on:click_outside= {resetCurrentlyAddingTask}
 					on:stop-add-task= {resetCurrentlyAddingTask}
-					on:add-task = {handleAddTask}/>
+					on:add-task = {handleAddTask}
+					on:edit-list-name = {handleEditListName}/>
 			</div>
 		{/each}
 	</section>
