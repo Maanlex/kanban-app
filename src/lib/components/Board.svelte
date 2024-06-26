@@ -131,7 +131,7 @@
 
 		{#each lists as list, idx (list.id)}
 			<div class="column" animate:flip="{{duration: flipDurationMs}}" >    
-					<Column name={list.name} items={list.tasks} listId={list.id}
+					<Column list={list}
 					onDrop={(newItems) => handleItemFinalize(idx, newItems)} 
 					on:wants-add-task={handleWantsToAddTask}
 					on:click_outside= {resetCurrentlyAddingTask}

@@ -14,7 +14,7 @@
         overflow-y: scroll;
     }
     .list-header {
-		height: 2.5em;
+		height: 4em;
         width: 100%;
 		font-weight: bold;
         display: flex;
@@ -32,18 +32,19 @@
 	import { flip } from 'svelte/animate';
     import { dndzone,  TRIGGERS, SHADOW_ITEM_MARKER_PROPERTY_NAME } from 'svelte-dnd-action';
     import {createEventDispatcher, onMount} from 'svelte';
-    import {type Task} from '$lib/types';
+    import {type List, type Task} from '$lib/types';
     import { clickOutside } from '$lib/utils';
 	import TaskCard from './task/TaskCard.svelte';
 	import { isDragging, listNameChange } from '$lib/stores/store';
-	import InputHelp from './InputHelp.svelte';
     
 	const flipDurationMs = 200;
 
     // Components parameter
-    export let name: string;
-    export let items: Task[];
-    export let listId: number;
+    export let list: List;
+    let name: string = list.name;
+    let items: Task[] = list.tasks;
+    let listId: number = list.id;
+    let tasksLimit: number = list.tasksLimit;
 	export let onDrop: (newItems: Task[]) => void;
 
 
@@ -160,6 +161,10 @@
         <button class="btn btn-ghost btn-xs absolute right-2 top-3">
             <span class="icon-[mdi--dots-vertical]" style="width: 1.2rem; height: 1.2rem;"></span>
         </button>
+        {#if tasksLimit>0}
+            <h2 class="absolute left-5 top-9 {items.length>=tasksLimit ? "text-error" : "text-primary"}">
+            {items.length + "/" + tasksLimit}</h2>
+        {/if}
 	</div>
     <div class="divider mb-0 mt-0"/>
 	<div class="list-content" use:dndzone={{items, flipDurationMs, transformDraggedElement, zoneTabIndex: -1,
