@@ -9,7 +9,7 @@
 		overflow-y: hidden;
 	}
 	.list-content {
-        height: calc(100% - 8em);
+        height: calc(100% - 9em);
         /* Notice that the scroll container needs to be the dndzone if you want dragging near the edge to trigger scrolling */
         overflow-y: scroll;
     }
@@ -194,18 +194,16 @@
         
     </div>
 
-    <!-- FIXME: button and input text not centered--> 
     <div class="w-11/12 left-0 right-0 ml-auto mr-auto absolute bottom-2">
         {#if !isAddingTask}
-            <button class="btn btn-block bg-transparent border-transparent"
+            <button class="btn btn-block btn-ghost"
             on:click={handleAddTaskSwitch}>
                 <span class="icon-[mdi--plus]" style="width: 1.2rem; height: 1.2rem;"></span>
                 Add a new Task
             </button>
         {:else}
-            <!-- FIXME: input overflow-->
             <input id="task_name_input" type="text" placeholder="Enter a title for this Task..."
-            class="input max-w-xs" autocomplete="off" 
+            class="input input-md w-full max-w-xs" autocomplete="off" 
             use:clickOutside on:click_outside on:keydown={handleTaskNameInputKeydown} use:inputinit/>
         {/if}
     </div>
