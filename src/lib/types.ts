@@ -57,7 +57,7 @@ export const BasicBoard:Board = {
             id:3,
             name: "Done",
             tasks: [],
-            tasksLimit: -1
+            tasksLimit: 0
         }
     ]
 }

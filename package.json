@@ -42,6 +42,7 @@
     "vitest": "^1.6.0"
   },
   "dependencies": {
+    "@fontsource/poppins": "^5.0.14",
     "@iconify-json/mdi": "^1.1.67",
     "@tailwindcss/typography": "^0.5.13",
     "bits-ui": "^0.21.10",

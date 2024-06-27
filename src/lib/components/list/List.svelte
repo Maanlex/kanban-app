@@ -34,8 +34,9 @@
     import {createEventDispatcher, onMount} from 'svelte';
     import {type List, type Task} from '$lib/types';
     import { clickOutside } from '$lib/utils';
-	import TaskCard from './task/TaskCard.svelte';
+	import TaskCard from '$lib/components/task/TaskCard.svelte';
 	import { isDragging, listNameChange } from '$lib/stores/store';
+	import ListDropdownMenu from './ListDropdownMenu.svelte';
     
 	const flipDurationMs = 200;
 
@@ -46,6 +47,7 @@
     let listId: number = list.id;
     let tasksLimit: number = list.tasksLimit;
 	export let onDrop: (newItems: Task[]) => void;
+    export let getAllListsName: () => Array<{id: number, name: string}>
 
 
 	function handleDndConsiderCards(e: CustomEvent<DndEvent<Task>>) {
@@ -117,13 +119,20 @@
     $: listNameInputState = isInputHidden ? "hidden" : "";
     $: listNameH2State = isInputHidden ? "" : "hidden"; 
 
+    //$: isInputHidden, console.log(isInputHidden);
+    
+
     function handleEditListName(){
-        if(actualListName !== name){
-            if(actualListName === "") actualListName = name;
-            $listNameChange = {listId: listId, name: actualListName};
-            if(!$isDragging) dispatch("edit-list-name");
-        }
-        isInputHidden = true;
+            if(!isInputHidden){
+                if(actualListName !== name){
+                if(actualListName === "") actualListName = name;
+                $listNameChange = {listId: listId, name: actualListName};
+                if(!$isDragging) dispatch("edit-list-name");
+                }
+                isInputHidden = true;
+            }
+
+            
     }
     function handleListNameInputKeydown(e: KeyboardEvent){
         switch(e.key){
@@ -134,17 +143,17 @@
         }
     }
     function handleListNameInputActivation(){
+
         isInputHidden = false;
         setTimeout(() => {
             listNameInput.focus();
             listNameInput.select();
-        },1);
-        
+        },15);
     }
+    
 
 </script>
 <!-- TODO: change drop zone target -->
-<!-- TODO: edit, delete list-->
 <div class='wrapper'>
  	<div class="list-header">
 
@@ -158,9 +167,14 @@
         on:focusout={handleEditListName}/>
 
 
-        <button class="btn btn-ghost btn-xs absolute right-2 top-3">
-            <span class="icon-[mdi--dots-vertical]" style="width: 1.2rem; height: 1.2rem;"></span>
-        </button>
+        <ListDropdownMenu list={list} getAllListsName={getAllListsName}
+        on:edit-list-name={handleListNameInputActivation} 
+        on:edit-tasks-limit
+        on:delete-list
+        on:delete-all-tasks
+        on:move-all-tasks
+        on:move-all-tasks-new-list/>
+    
         {#if tasksLimit>0}
             <h2 class="absolute left-5 top-9 {items.length>=tasksLimit ? "text-error" : "text-primary"}">
             {items.length + "/" + tasksLimit}</h2>
@@ -189,6 +203,7 @@
                 Add a new Task
             </button>
         {:else}
+            <!-- FIXME: input overflow-->
             <input id="task_name_input" type="text" placeholder="Enter a title for this Task..."
             class="input max-w-xs" autocomplete="off" 
             use:clickOutside on:click_outside on:keydown={handleTaskNameInputKeydown} use:inputinit/>
