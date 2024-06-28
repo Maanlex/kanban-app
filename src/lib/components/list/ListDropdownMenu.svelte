@@ -5,6 +5,7 @@
 	import { fade } from "svelte/transition";
 	import InputHelp from "../InputHelp.svelte";
 	import type { List } from "$lib/types";
+	import { toaster } from "@svelte-kit/svelte-toast";
 
     export let list: List;
     export let getAllListsName: () => Array<{id: number,name: string}>
@@ -51,6 +52,15 @@
         
     }
 
+    function handleDeleteAllTasksClick(){
+        if(list.tasks.length>0){
+            deleteDialogTrigger.click();
+            alertDialogType = AlertDialogType.DELETE_ALL_TASKS;
+        }else{
+            toaster.error({title: "Error Delete", content:"There is no task in this list!"});
+        }
+    }
+
     const EMPTY = -2;
     const NEW_LIST = -1;
     let selectListValue: number;
@@ -63,19 +73,18 @@
                 if(newListValue !== "" && newListValue != undefined){
                     dispatch("move-all-tasks-new-list",{oldList: list.id, newListName: newListValue});
                 }else{
-                    // warning message
+                    toaster.error({title: "Empty name", content:"You need to name the new list."});
                 }
             }else{
                 dispatch("move-all-tasks",{oldList: list.id, newList: selectListValue});
             }
         }else{
-            // warning message
+            toaster.error({title: "No selection", content:"No list has been selected."});
         }
     }
 
 </script>
 
-<!-- FIXME: dropdown menu adaptation on the side of the screen-->
 <DropdownMenu.Root bind:open={isDropdownMenuOpen}> 
     <DropdownMenu.Trigger class="btn btn-ghost btn-xs absolute right-2 top-3"> 
         <span class="icon-[mdi--dots-vertical]" style="width: 1.2rem; height: 1.2rem;"></span>
@@ -118,9 +127,7 @@
                 </DropdownMenu.Item>
                 <DropdownMenu.Item> 
                     <!-- TODO: onclick function-->
-                    <button class="btn-dropOrContextMenu"
-                    on:click={() => {deleteDialogTrigger.click();
-                        alertDialogType = AlertDialogType.DELETE_ALL_TASKS}}>
+                    <button class="btn-dropOrContextMenu" on:click={handleDeleteAllTasksClick}>
                         <span class="icon-[mdi--delete] text-delete" style="width: 1.2rem; height: 1.2rem"></span>
                         <p class="text-delete">Delete all tasks</p>
                     </button>

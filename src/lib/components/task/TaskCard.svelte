@@ -7,6 +7,7 @@
 	import { fade } from 'svelte/transition';
 	import InputHelp from '../InputHelp.svelte';
 	import { contextMenuUp } from '$lib/stores/store';
+	import { toaster } from '@svelte-kit/svelte-toast';
 
     export let task: Task;
 
@@ -30,6 +31,8 @@
                     task.name = newTaskName;
                     dispatch("edit-task",task);
                     closeTrigger.click();
+                }else{
+                    toaster.error({title: "Empty name", content:"The new name cannot be empty."});
                 }
                 break;
         }

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import NavBar from '$lib/components/NavBar.svelte';
 	import '../app.postcss';
+	import {Toast} from '@svelte-kit/svelte-toast';
 
 </script>
 
@@ -11,4 +12,4 @@
 	</div>
 	
 </div>
-	
+<Toast position="bottom-right"/>

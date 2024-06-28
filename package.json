@@ -44,6 +44,7 @@
   "dependencies": {
     "@fontsource/poppins": "^5.0.14",
     "@iconify-json/mdi": "^1.1.67",
+    "@svelte-kit/svelte-toast": "^0.9.6",
     "@tailwindcss/typography": "^0.5.13",
     "bits-ui": "^0.21.10",
     "clsx": "^2.1.1",
