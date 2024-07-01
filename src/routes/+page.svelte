@@ -1,9 +1,9 @@
 <script lang="ts">
-	import {type Board, BasicBoard, type List } from '$lib/types';
+	import {TestBoard, List } from '$lib/entities';
 	import BoardCpnt from '$lib/components/Board.svelte'
 	import { boardStore } from '$lib/stores';
 
-	$boardStore = BasicBoard;
+	$boardStore = TestBoard();
 
 
 	let handleBoardUpdated = (newLists: List[]) => {

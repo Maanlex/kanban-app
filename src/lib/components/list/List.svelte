@@ -4,7 +4,7 @@
 		width: 100%;
         position: relative;
         @apply rounded-lg;
-        @apply bg-neutral-content bg-opacity-25;
+        @apply bg-neutral-400 bg-opacity-25;
 		/*Notice we make sure this container doesn't scroll so that the title stays on top and the dndzone inside is scrollable*/
 		overflow-y: hidden;
 	}
@@ -32,7 +32,7 @@
 	import { flip } from 'svelte/animate';
     import { dndzone,  TRIGGERS, SHADOW_ITEM_MARKER_PROPERTY_NAME } from 'svelte-dnd-action';
     import {createEventDispatcher, onMount} from 'svelte';
-    import {type List, type Task} from '$lib/types';
+    import {List, Task} from '$lib/entities';
     import { clickOutside } from '$lib/utils';
 	import TaskCard from '$lib/components/task/TaskCard.svelte';
 	import { isDragging, listNameChange } from '$lib/stores/store';
@@ -44,10 +44,10 @@
     export let list: List;
     let name: string = list.name;
     let items: Task[] = list.tasks;
-    let listId: number = list.id;
+    let listId: string = list.id;
     let tasksLimit: number = list.tasksLimit;
 	export let onDrop: (newItems: Task[]) => void;
-    export let getAllListsName: () => Array<{id: number, name: string}>
+    export let getAllListsName: () => Array<{id: string, name: string}>
 
 
 	function handleDndConsiderCards(e: CustomEvent<DndEvent<Task>>) {

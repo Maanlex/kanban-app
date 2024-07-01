@@ -4,11 +4,11 @@
 	import { createEventDispatcher } from "svelte";
 	import { fade } from "svelte/transition";
 	import InputHelp from "../InputHelp.svelte";
-	import type { List } from "$lib/types";
+	import { List } from "$lib/entities";
 	import { toaster } from "@svelte-kit/svelte-toast";
 
     export let list: List;
-    export let getAllListsName: () => Array<{id: number,name: string}>
+    export let getAllListsName: () => Array<{id: string,name: string}>
 
     let isDropdownMenuOpen: boolean;
     enum AlertDialogType {DELETE_ALL_TASKS, DELETE_LIST}
@@ -126,7 +126,6 @@
                     </button>
                 </DropdownMenu.Item>
                 <DropdownMenu.Item> 
-                    <!-- TODO: onclick function-->
                     <button class="btn-dropOrContextMenu" on:click={handleDeleteAllTasksClick}>
                         <span class="icon-[mdi--delete] text-delete" style="width: 1.2rem; height: 1.2rem"></span>
                         <p class="text-delete">Delete all tasks</p>
@@ -191,7 +190,7 @@
 
             <select bind:value={selectListValue} class="select select-bordered w-full max-w-xs">
                 <option value={EMPTY} disabled selected>The list you want the tasks to move to </option>
-                {#each getAllListsName().filter((l) => l.id != list.id) as l}
+                {#each getAllListsName().filter((l) => l.id !== list.id) as l}
                     <option value={l.id}>{l.name}</option>
                 {/each}
                 <option value={NEW_LIST}>New list</option>

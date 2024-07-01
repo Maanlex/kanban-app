@@ -1,13 +1,13 @@
 import {writable} from 'svelte/store';
-import { type Board } from '../types';
+import {Board} from '../entities';
 
 export const boardStore = writable<Board>();
 
 
-export const currentlyAddingTaskStore = writable(-1);
+export const currentlyAddingTaskStore = writable("");
 
-export const contextMenuUp = writable(-1);
+export const contextMenuUp = writable("");
 
 export const isDragging = writable(false);
 
-export const listNameChange = writable({listId: -1, name:""});
+export const listNameChange = writable({listId: "", name:""});

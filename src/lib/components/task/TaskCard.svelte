@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {type Task} from '$lib/types'
+    import {Task} from '$lib/entities'
 	import TaskCardWrapper from './TaskCardWrapper.svelte';
 	import {createEventDispatcher} from 'svelte'
     import { AlertDialog, ContextMenu, Dialog } from "bits-ui";

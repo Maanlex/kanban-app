@@ -24,11 +24,11 @@
 	import { flip } from 'svelte/animate';
   	import { dndzone, setDebugMode } from 'svelte-dnd-action';
 	import ListCpnt from "./list/List.svelte";
-  	import { type Board, type List, type Task, } from '$lib/types';
+  	import { Board, List,Task} from '$lib/entities';
 	import {currentlyAddingTaskStore} from '$lib/stores';
 	import {clickOutside} from '$lib/utils'
 	import { isDragging, listNameChange } from '$lib/stores/store';
-	import { updated } from '$app/stores';
+	import {v4 as uuid} from 'uuid';
 	const flipDurationMs = 150;
 
   	export let lists: List[];
@@ -40,7 +40,7 @@
 	export let onFinalUpdate: (newLists: List[]) => void;
 
 	function getAllListsName(){
-		let res = new Array<{id: number,name: string}>;
+		let res = new Array<{id: string,name: string}>;
 		res = lists.map((l) => {
 			return {id: l.id, name: l.name};
 		})
@@ -54,26 +54,26 @@
   	function handleDndFinalizeColumns(e: CustomEvent<DndEvent<List>>) {
 		$isDragging = false;
 		lists = e.detail.items;
-		if($listNameChange.listId != -1) handleEditListName();
+		if($listNameChange.listId !== "") handleEditListName();
 		else onFinalUpdate(lists);
   	}
  	function handleItemFinalize(columnIdx: number, newItems: Task[]) {
 		lists[columnIdx].tasks = newItems;
-		if($listNameChange.listId != -1) handleEditListName();
+		if($listNameChange.listId !== "") handleEditListName();
     	onFinalUpdate([...lists]);
 	}
 
-	const handleWantsToAddTask = (e: CustomEvent<number>) => {
+	const handleWantsToAddTask = (e: CustomEvent<string>) => {
 		currentlyAddingTaskStore.set(e.detail);
 	}
 
 	const resetCurrentlyAddingTask = () => {
-		currentlyAddingTaskStore.set(-1)
+		currentlyAddingTaskStore.set("")
 	}
 
 	function handleAddTask(e: CustomEvent){
 		// TODO: id generation
-		let id:number = Math.floor(Math.random() * 999999);
+		let id: string = uuid();
 		let newTask: Task = {id: id, name:e.detail.name};
 
 		let list: List | undefined = lists.find((l) => l.id == e.detail.listId);
@@ -108,7 +108,7 @@
 
 	function handleAddList(newListName: string, tasks: Task[] = new Array<Task>){
 		// TODO: id generation
-		let id:number = Math.floor(Math.random() * 999999);
+		let id: string = uuid();
 		let newList: List = {
 			id:id,
 			name: newListName,
@@ -129,7 +129,7 @@
 			});
 			lists = updatedLists;
 			onFinalUpdate(lists);
-			$listNameChange.listId = -1;
+			$listNameChange.listId = "";
 		}
 	}
 	function handleEditTasksLimit(e: CustomEvent){
@@ -144,13 +144,13 @@
 			onFinalUpdate(lists);
 		}
 	}
-	function handleDeleteList(e: CustomEvent<number>){
-		const updatedLists = lists.filter((l) => l.id != e.detail);
+	function handleDeleteList(e: CustomEvent<string>){
+		const updatedLists = lists.filter((l) => l.id !== e.detail);
 		lists = updatedLists;
 		onFinalUpdate(lists);
 	}
-	function handleDeleteAllTasks(e: CustomEvent<number>){
-		let list: List | undefined = lists.find((l) => l.id == e.detail);
+	function handleDeleteAllTasks(e: CustomEvent<string>){
+		let list: List | undefined = lists.find((l) => l.id === e.detail);
 		if(list){
 			list.tasks = new Array<Task>;
 			const updatedLists = lists.map((l) => {
